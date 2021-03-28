@@ -1,13 +1,30 @@
 const { connect, model } = require("mongoose");
+const config = require("config");
+const debug = require("debug")("app:db");
 
-connect("mongodb://localhost/moi", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => console.log("Connected to MongoDB..."))
-  .catch((error) => console.error("Could not connect to MongoDB...", error));
+async function connectDB() {
+  try {
+    await connect(config.dbUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    debug("Connected to MongoDB...");
+  } catch (error) {
+    debug("Could not connect to MongoDB...", error);
+  }
+}
 
-const Moi = model("Moi", { name: String, location: String });
+connectDB();
+
+// connect("mongodb://localhost/moi", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// })
+//   .then(() => console.log("Connected to MongoDB..."))
+//   .catch((error) => console.error("Could not connect to MongoDB...", error));
+
+const schema = { name: String, location: String };
+const Moi = model("Moi", schema);
 
 async function createMoiRecord() {
   const moi = new Moi({ name: "Balasundaram", location: "Vadakadu" });
